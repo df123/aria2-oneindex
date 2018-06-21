@@ -15,7 +15,7 @@ if [ $2 -eq 1 ]
     then
 		echo "$filepath" >> /root/.aria2/oneIndexUpload.log
 		echo "start file upload $(date)" >> /root/.aria2/oneIndexUpload.log
-        php /var/www/html/one.php upload:file "$filepath" >> /root/.aria2/oneIndexUpload.log
+        	php /var/www/html/one.php upload:file "$filepath" >> /root/.aria2/oneIndexUpload.log
 		echo "ok file upload $(date)" >> /root/.aria2/oneIndexUpload.log
 		echo "del file $(date)" >> /root/.aria2/oneIndexUpload.log
 		rm -rf "$filepath"
