@@ -164,14 +164,6 @@ chmod +x *
 chmod 777 *
 }
 
-ss_install(){
-echo -e "${GreenBG} 开始安装ss-libev ${Font}"
-sudo sh -c 'printf "deb http://deb.debian.org/debian jessie-backports main\n" > /etc/apt/sources.list.d/jessie-backports.list'
-sudo sh -c 'printf "deb http://deb.debian.org/debian jessie-backports-sloppy main" >> /etc/apt/sources.list.d/jessie-backports.list'
-sudo apt update
-sudo apt -t jessie-backports-sloppy install shadowsocks-libev
-}
-
 main(){
       check_system
       is_root
@@ -180,7 +172,6 @@ main(){
 			aria_install
 			php_install
 			oneindex_install
-			ss_install
 			init_install
 }
 
