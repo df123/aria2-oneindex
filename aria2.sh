@@ -98,7 +98,6 @@ max-concurrent-downloads=10
 max-connection-per-server=5
 min-split-size=10M
 split=20
-max-overall-upload-limit=10K
 disable-ipv6=false
 input-file=/root/.aria2/aria2.session
 save-session=/root/.aria2/aria2.session
@@ -145,9 +144,9 @@ bash /etc/init.d/aria2 start
 php_install(){
 echo -e "${GreenBG} 开始安装PhP5.6 ${Font}"
 apt-get install php5-common libapache2-mod-php5 php5-cli
+apt-get install php5-curl
 /etc/init.d/apache2 stop
 /etc/init.d/apache2 start
-apt-get install php5-curl
 }
 
 oneindex_install(){
