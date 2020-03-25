@@ -43,44 +43,46 @@ is_root(){
 }
 
 
-
 # 检查端口是否被占用
 port_exist_check(){
     if [[ 0 -eq `netstat -tlpn | grep "$1"| wc -l` ]];then
         echo -e "${OK} ${GreenBG} $1 端口未被占用 ${Font}"
-        sleep 1
+        return 0
     else
         echo -e "${Error} ${RedBG} $1 端口被占用，请检查占用进程 结束后重新运行脚本 ${Font}"
         netstat -tlpn | grep "$1"
-        exit 1
+        return 1
     fi
 }
 
+
+#寻找未被发现的端口
+available_port="8080"
+find_port(){
+    port=$1
+    port_exist_check $port
+    while [[ 1 -eq $? ]]
+    do
+        let 'port += 1'
+        port_exist_check $port
+    done
+    available_port=$port
+}
 
 get_Aria2Pass(){
     read -p "请输入你的Aria2密钥:" pass
 }
 
-create_aria_user()
-{
-    useradd test2
-    spawn passwd test2
-    #Enter new UNIX password
-    expect "Enter new UNIX password:"
-    send "123456\n"
-    expect "Retype new UNIX password:"
-    send "123456\n"
-    expect eof
-}
-
 aria_install(){
     echo -e "${GreenBG} 开始安装Aria2 ${Font}"
-
+    user_path="/home/$1"
     check_software_installed_s "aria2"
 
-    mkdir "/root/.aria2" && cd "/root/.aria2"
+    mkdir "$user_path/.aria2" && cd "$user_path/.aria2"
 
-    echo "dir=/root/Download
+    find_port 6800
+
+    echo "dir=$user_path/download
     rpc-secret=${pass}
 
     daemon=true
@@ -94,18 +96,18 @@ aria_install(){
     min-split-size=10M
     split=20
     disable-ipv6=false
-    input-file=/root/.aria2/aria2.session
-    save-session=/root/.aria2/aria2.session
+    input-file=$user_path/.aria2/aria2.session
+    save-session=$user_path/.aria2/aria2.session
 
     enable-rpc=true
     rpc-allow-origin-all=true
     rpc-listen-all=true
-    rpc-listen-port=6800
+    rpc-listen-port=$available_port
 
     follow-torrent=true
-    listen-port=51413
+    listen-port=6881-6999
     enable-dht=true
-    enable-dht6=false
+    enable-dht6=true
     dht-listen-port=6881-6999
     bt-enable-lpd=true
     enable-peer-exchange=true
@@ -113,208 +115,26 @@ aria_install(){
     user-agent=Transmission/2.77
     seed-time=0
     bt-seed-unverified=true
-    on-download-complete=/root/.aria2/autoupload.sh
-    allow-overwrite=true" > /root/.aria2/aria2.conf
-
-    echo "*/10 * * * * /usr/bin/php /var/www/html/one.php cache:refresh" >> /var/spool/cron/crontabs/root
+    on-download-complete=$user_path/.aria2/automatic_move.sh
+    on-download-stop=$user_path/.aria2/automatic_delete.sh
+    allow-overwrite=true" > $user_path/.aria2/aria2.conf
 }
 
-init_install(){
-echo -e "${GreenBG} 开始配置自启 ${Font}"
-wget https://raw.githubusercontent.com/df123/aria2-oneindex/master/autoupload.sh
-sed -i '4i\name='${name}'' autoupload.sh
-sed -i '4i\folder='${folder}'' autoupload.sh
-mv autoupload.sh /root/.aria2/autoupload.sh
-chmod +x /root/.aria2/autoupload.sh
-bash /etc/init.d/aria2 start
+create_aria2_user(){
+    useradd -m -s /bin/false $1
 }
 
-php_install(){
-    install_software_list=("-cli" "-curl")
-    echo -e "${GreenBG} 开始安装PHP7 ${Font}"
-    read -p "${Yellow}请输入你想要安装的php版本（默认php7.3）:${Font}" php_version
-
-    if [ "$php_version" = "" ]; 
-    then
-        php_version=$default_version
-        default_version=$php_version
-        check_software_installed_s $php_version
-        for item in ${install_software_list[@]}
-        do
-            check_software_installed_s $php_version$item
-        done
-    fi
-}
-
-oneindex_install(){
-    echo -e "${GreenBG} 开始安装oneindex ${Font}"
-    cd /var/www/
-    git clone https://github.com/donwa/oneindex.git
-    chown -R www-data:www-data oneindex/
-    chmod -R 744 oneindex/
-}
-
-apache2_sites(){
-
-echo "<VirtualHost *:8080>
-	# The ServerName directive sets the request scheme, hostname and port that
-	# the server uses to identify itself. This is used when creating
-	# redirection URLs. In the context of virtual hosts, the ServerName
-	# specifies what hostname must appear in the request's Host: header to
-	# match this virtual host. For the default virtual host (this file) this
-	# value is not decisive as it is used as a last resort host regardless.
-	# However, you must set it for any further virtual host explicitly.
-	#ServerName www.example.com
-
-	ServerAdmin webmaster@localhost
-	DocumentRoot /var/www/oneindex
-
-	# Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
-	# error, crit, alert, emerg.
-	# It is also possible to configure the loglevel for particular
-	# modules, e.g.
-	#LogLevel info ssl:warn
-
-	ErrorLog \${APACHE_LOG_DIR}/error.log
-	CustomLog \${APACHE_LOG_DIR}/access.log combined
-
-	# For most configuration files from conf-available/, which are
-	# enabled or disabled at a global level, it is possible to
-	# include a line for only one particular virtual host. For example the
-	# following line enables the CGI configuration for this host only
-	# after it has been globally disabled with "a2disconf".
-	#Include conf-available/serve-cgi-bin.conf
-</VirtualHost>
-# vim: syntax=apache ts=4 sw=4 sts=4 sr noet" > /etc/apache2/sites-available/oneindex.conf
-    ln -s /etc/apache2/sites-available/oneindex.conf /etc/apache2/sites-enabled/oneindex.conf
-    /etc/init.d/apache2 restart
-}
-
-nginx_sites(){
-    echo "##
-# You should look at the following URL's in order to grasp a solid understanding
-# of Nginx configuration files in order to fully unleash the power of Nginx.
-# https://www.nginx.com/resources/wiki/start/
-# https://www.nginx.com/resources/wiki/start/topics/tutorials/config_pitfalls/
-# https://wiki.debian.org/Nginx/DirectoryStructure
-#
-# In most cases, administrators will remove this file from sites-enabled/ and
-# leave it as reference inside of sites-available where it will continue to be
-# updated by the nginx packaging team.
-#
-# This file will automatically load configuration files provided by other
-# applications, such as Drupal or Wordpress. These applications will be made
-# available underneath a path with that package name, such as /drupal8.
-#
-# Please see /usr/share/doc/nginx-doc/examples/ for more detailed examples.
-##
-
-# Default server configuration
-#
-server {
-	listen 8080 default_server;
-	listen [::]:8080 default_server;
-
-	# SSL configuration
-	#
-	# listen 443 ssl default_server;
-	# listen [::]:443 ssl default_server;
-	#
-	# Note: You should disable gzip for SSL traffic.
-	# See: https://bugs.debian.org/773332
-	#
-	# Read up on ssl_ciphers to ensure a secure configuration.
-	# See: https://bugs.debian.org/765782
-	#
-	# Self signed certs generated by the ssl-cert package
-	# Don't use them in a production server!
-	#
-	# include snippets/snakeoil.conf;
-
-	root /var/www/oneindex;
-
-	# Add index.php to the list if you are using PHP
-	index index.html index.htm index.nginx-debian.html index.php;
-
-	server_name _;
-
-	location / {
-		# First attempt to serve request as file, then
-		# as directory, then fall back to displaying a 404.
-		try_files \$uri \$uri/ =404;
-	}
-
-	# pass PHP scripts to FastCGI server
-	#
-	location ~ \.php$ {
-		include snippets/fastcgi-php.conf;
-	
-		# With php-fpm (or other unix sockets):
-		fastcgi_pass unix:/run/php/$default_version-fpm.sock;
-		# With php-cgi (or other tcp sockets):
-		#fastcgi_pass 127.0.0.1:9000;
-	}
-
-	# deny access to .htaccess files, if Apache's document root
-	# concurs with nginx's one
-	#
-	#location ~ /\.ht {
-	#	deny all;
-	#}
-}
-
-
-# Virtual Host configuration for example.com
-#
-# You can move that to a different file under sites-available/ and symlink that
-# to sites-enabled/ to enable it.
-#
-#server {
-#	listen 80;
-#	listen [::]:80;
-#
-#	server_name example.com;
-#
-#	root /var/www/example.com;
-#	index index.html;
-#
-#	location / {
-#		try_files \$uri \$uri/ =404;
-#	}
-#}" > /etc/nginx/sites-available/oneindex
-    ln -s /etc/nginx/sites-available/oneindex /etc/nginx/sites-enabled/oneindex
-    service nginx restart
-}
-
-check_webserver(){
-    installed_server=" "
-    if [[ 1 -eq `dpkg -s apache2 | grep "Status: install ok installed" | wc -l` ]];then
-        echo -e "${OK} ${GreenBG} apache2 已经安装 ${Font}"
-        apache2_sites
-        sleep 1
-    elif [[ 1 -eq `dpkg -s nginx | grep "Status: install ok installed" | wc -l` ]];then
-        echo -e "${OK} ${GreenBG} nginx 已经安装 ${Font}"
-        fpm="-fpm"
-        check_software_installed_s $default_version$fpm
-        sleep 1
-    else 
-        echo -e "${Info} ${Yellow} apache2和nginx均未安装，现在安装apache2 ${Font}"
-    fi
-}
 
 main(){
-    # check_system
-    # is_root
-    # check_webserver
-    # php_install
-    # oneindex_install
-    nginx_sites
-	#     sleep 2
-	# 		get_Aria2Pass
-	# 		aria_install
-	# 		php_install
-	# 		oneindex_install
-	# 		init_install
+    check_system
+    is_root
+    php_install
+    check_webserver
+    oneindex_install
+    sleep 2
+    get_Aria2Pass
+    create_aria2_user aria2
+    aria_install aria2
 }
 
 main
