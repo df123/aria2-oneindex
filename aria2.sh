@@ -80,44 +80,51 @@ aria_install(){
 
     mkdir "$user_path/.aria2" && cd "$user_path/.aria2"
 
+    touch $user_path/.aria2/aria2.session
+    chmod 744 $user_path/.aria2/aria2.session
+
     find_port 6800
 
     echo "dir=$user_path/download
-    rpc-secret=${pass}
+rpc-secret=${pass}
 
-    daemon=true
+daemon=true
 
-    disk-cache=32M
-    file-allocation=trunc
-    continue=true
+disk-cache=32M
+file-allocation=trunc
+continue=true
 
-    max-concurrent-downloads=10
-    max-connection-per-server=5
-    min-split-size=10M
-    split=20
-    disable-ipv6=false
-    input-file=$user_path/.aria2/aria2.session
-    save-session=$user_path/.aria2/aria2.session
+max-concurrent-downloads=10
+max-connection-per-server=5
+min-split-size=10M
+split=20
+disable-ipv6=false
+input-file=$user_path/.aria2/aria2.session
+save-session=$user_path/.aria2/aria2.session
 
-    enable-rpc=true
-    rpc-allow-origin-all=true
-    rpc-listen-all=true
-    rpc-listen-port=$available_port
+enable-rpc=true
+rpc-allow-origin-all=true
+rpc-listen-all=true
+rpc-listen-port=$available_port
 
-    follow-torrent=true
-    listen-port=6881-6999
-    enable-dht=true
-    enable-dht6=true
-    dht-listen-port=6881-6999
-    bt-enable-lpd=true
-    enable-peer-exchange=true
-    peer-id-prefix=-TR2770-
-    user-agent=Transmission/2.77
-    seed-time=0
-    bt-seed-unverified=true
-    on-download-complete=$user_path/.aria2/automatic_move.sh
-    on-download-stop=$user_path/.aria2/automatic_delete.sh
-    allow-overwrite=true" > $user_path/.aria2/aria2.conf
+follow-torrent=true
+listen-port=6881-6999
+enable-dht=true
+enable-dht6=true
+dht-listen-port=6881-6999
+bt-enable-lpd=true
+enable-peer-exchange=true
+peer-id-prefix=-TR2770-
+user-agent=Transmission/2.77
+seed-time=0
+bt-seed-unverified=true
+on-download-complete=$user_path/.aria2/automatic_move.sh
+on-download-stop=$user_path/.aria2/automatic_delete.sh
+allow-overwrite=true" > $user_path/.aria2/aria2.conf
+
+    mv aria2.service /etc/systemd/system/
+    systemctl enable aria2.service
+    systemctl start aria2.service
 }
 
 create_aria2_user(){
