@@ -42,13 +42,12 @@ php_install(){
     if [ "$php_version" = "" ]; 
     then
         php_version=$default_version
-        default_version=$php_version
-        check_software_installed_s $php_version
-        for item in ${install_software_list[@]}
-        do
-            check_software_installed_s $php_version$item
-        done
     fi
+	check_software_installed_s $php_version
+	for item in ${install_software_list[@]}
+	do
+		check_software_installed_s $php_version$item
+	done
 }
 
 
@@ -66,6 +65,7 @@ check_webserver(){
         sleep 1
     else 
         echo -e "${Info} ${Yellow} apache2和nginx均未安装，现在安装apache2 ${Font}"
+		check_software_installed_s apache2
     fi
 }
 

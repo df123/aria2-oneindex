@@ -20,8 +20,6 @@ check_system(){
         exit 1
     fi
 
-	port_exist_check 6800
-
 	apt update
 
     requirement_software=("wget" "unzip" "net-tools" "curl" "git")
@@ -122,7 +120,7 @@ on-download-complete=$user_path/.aria2/automatic_move.sh
 on-download-stop=$user_path/.aria2/automatic_delete.sh
 allow-overwrite=true" > $user_path/.aria2/aria2.conf
 
-    mv aria2.service /etc/systemd/system/
+    mv ./aria2.service /etc/systemd/system/
     systemctl enable aria2.service
     systemctl start aria2.service
 }
