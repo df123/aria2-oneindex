@@ -71,10 +71,10 @@ check_webserver(){
 
 oneindex_install(){
     echo -e "${GreenBG} 开始安装oneindex ${Font}"
+	cd /var/www/
     git clone https://github.com/donwa/oneindex.git
     chown -R www-data:www-data oneindex/
     chmod -R 744 oneindex/
-	mv oneindex /var/www/
     echo "*/10 * * * * /usr/bin/php /var/www/oneindex/one.php cache:refresh" >> /var/spool/cron/crontabs/www-data
 }
 

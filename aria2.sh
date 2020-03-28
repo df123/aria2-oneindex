@@ -120,7 +120,8 @@ on-download-complete=$user_path/.aria2/automatic_move.sh
 on-download-stop=$user_path/.aria2/automatic_delete.sh
 allow-overwrite=true" > $user_path/.aria2/aria2.conf
 
-    mv ./aria2.service /etc/systemd/system/
+    cd /etc/systemd/system/
+    wget "https://raw.githubusercontent.com/df123/aria2-oneindex/dev/aria2.service"
     systemctl enable aria2.service
     systemctl start aria2.service
 }
