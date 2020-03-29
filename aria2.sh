@@ -120,7 +120,7 @@ on-download-complete=$user_path/.aria2/automatic_move.sh
 on-download-stop=$user_path/.aria2/automatic_delete.sh
 allow-overwrite=true" > $user_path/.aria2/aria2.conf
 
-    work_path=`pwd`
+    work_path=`dirname $0`
     mv $work_path/aria2.service /etc/systemd/system/
     systemctl enable aria2.service
     systemctl start aria2.service
