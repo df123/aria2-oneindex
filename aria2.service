@@ -4,7 +4,7 @@ Description=aria2
 [Service]
 User=aria2
 Type=oneshot
-ExecStart=aria2c
+ExecStart=/usr/bin/aria2c
 KillMode=control-group
 RemainAfterExit=yes
 
