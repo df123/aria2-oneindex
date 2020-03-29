@@ -134,13 +134,12 @@ create_aria2_user(){
 main(){
     check_system
     is_root
-    php_install
-    check_webserver
-    oneindex_install
-    sleep 2
     get_Aria2Pass
     create_aria2_user aria2
     aria_install aria2
+    php_install
+    check_webserver
+    oneindex_install
 }
 
 main
