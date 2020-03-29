@@ -74,7 +74,7 @@ oneindex_install(){
 	cd /var/www/
     git clone https://github.com/donwa/oneindex.git
     chown -R www-data:www-data oneindex/
-    chmod -R 744 oneindex/
+    chmod -R 755 oneindex/
     echo "*/10 * * * * /usr/bin/php /var/www/oneindex/one.php cache:refresh" >> /var/spool/cron/crontabs/www-data
 }
 

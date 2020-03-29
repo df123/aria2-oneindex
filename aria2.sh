@@ -81,14 +81,19 @@ aria_install(){
     user_path="/home/$1"
     check_software_installed_s "aria2"
 
-    mkdir "$user_path/.aria2" && cd "$user_path/.aria2"
+    mkdir "$user_path/.aria2"
+    chown aria2:aria2 "$user_path/.aria2"
+
+    mkdir "$user_path/downloads/"
+    chown aria2:aria2 "$user_path/downloads"
 
     touch $user_path/.aria2/aria2.session
+    chown aria2:aria2 $user_path/.aria2/aria2.session
     chmod 744 $user_path/.aria2/aria2.session
 
     find_port 6800
 
-    echo "dir=$user_path/download
+    echo "dir=$user_path/downloads
 rpc-secret=${pass}
 
 daemon=true
@@ -125,7 +130,12 @@ on-download-complete=$user_path/.aria2/automatic_move.sh
 on-download-stop=$user_path/.aria2/automatic_delete.sh
 allow-overwrite=true" > $user_path/.aria2/aria2.conf
 
-    systemctl enable $start_path/aria2.service
+    mv $start_path/automatic_* $user_path/.aria2/
+    chown aria2:aria2 $start_path/automatic_*
+    chmod 755 $start_path/automatic_*
+
+    mv $start_path/aria2.service $user_path/.aria2/
+    systemctl enable $user_path/.aria2/aria2.service
     systemctl start aria2.service
 }
 
