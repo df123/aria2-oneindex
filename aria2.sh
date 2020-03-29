@@ -7,27 +7,10 @@ source ./df123_library.sh
 #	Aria2+Oneindex
 # ====================================================
 
+start_path=""
 default_version="php7.3"
 bit=`uname -m`
 source /etc/os-release &>/dev/null
-# 系统检测、仅支持 Debian9+
-check_system(){
-	KernelBit="$(getconf LONG_BIT)"
-    if [[ "${ID}" == "debian" && ${VERSION_ID} -ge 9 ]];then
-        echo -e "${OK} ${GreenBG} 当前系统为 Debian ${VERSION_ID} ${Font} "
-    else
-        echo -e "${Error} ${RedBG} 当前系统为不在支持的系统列表内，安装中断 ${Font} "
-        exit 1
-    fi
-
-	apt update
-
-    requirement_software=("wget" "unzip" "net-tools" "curl" "git")
-	for item in ${requirement_software[@]}
-    do
-        check_software_installed_s $item
-    done
-}
 
 # 判定是否为root用户
 is_root(){
@@ -40,6 +23,28 @@ is_root(){
     fi
 }
 
+# 系统检测、仅支持 Debian9+
+check_system(){
+	KernelBit="$(getconf LONG_BIT)"
+    if [[ "${ID}" == "debian" && ${VERSION_ID} -ge 9 ]];then
+        echo -e "${OK} ${GreenBG} 当前系统为 Debian ${VERSION_ID} ${Font} "
+    else
+        echo -e "${Error} ${RedBG} 当前系统为不在支持的系统列表内，安装中断 ${Font} "
+        exit 1
+    fi
+
+    start_path=`pwd`
+}
+
+install_requirement_software(){
+    apt update
+
+    requirement_software=("wget" "unzip" "net-tools" "curl" "git")
+	for item in ${requirement_software[@]}
+    do
+        check_software_installed_s $item
+    done
+}
 
 # 检查端口是否被占用
 port_exist_check(){
@@ -120,6 +125,7 @@ on-download-complete=$user_path/.aria2/automatic_move.sh
 on-download-stop=$user_path/.aria2/automatic_delete.sh
 allow-overwrite=true" > $user_path/.aria2/aria2.conf
 
+
     systemctl enable aria2.service
     systemctl start aria2.service
 }
@@ -130,8 +136,9 @@ create_aria2_user(){
 
 
 main(){
-    check_system
     is_root
+    check_system
+    install_requirement_software
     get_Aria2Pass
     create_aria2_user aria2
     aria_install aria2
