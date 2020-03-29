@@ -130,10 +130,12 @@ on-download-complete=$user_path/.aria2/automatic_move.sh
 on-download-stop=$user_path/.aria2/automatic_delete.sh
 allow-overwrite=true" > $user_path/.aria2/aria2.conf
 
-    mv $start_path/automatic_* $user_path/.aria2/
+    chown aria2:aria2  $user_path/.aria2/aria2.conf
+
     chown aria2:aria2 $start_path/automatic_*
     chmod 755 $start_path/automatic_*
-
+    mv $start_path/automatic_* $user_path/.aria2/ 
+    
     mv $start_path/aria2.service $user_path/.aria2/
     systemctl enable $user_path/.aria2/aria2.service
     systemctl start aria2.service
