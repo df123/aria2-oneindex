@@ -117,16 +117,22 @@ rpc-listen-port=$available_port
 
 follow-torrent=true
 listen-port=6881-6999
+
 enable-dht=true
 enable-dht6=true
 dht-listen-port=6881-6999
+dht-file-path=$user_path/.aria2/dht.dat
+dht-file-path6=$user_path/.aria2/dht6.dat
+
 bt-enable-lpd=true
 enable-peer-exchange=true
 peer-id-prefix=-TR2770-
 user-agent=Transmission/2.77
-seed-time=0
+
+seed-ratio=2.0
+
 bt-seed-unverified=true
-on-download-complete=$user_path/.aria2/automatic_move.sh
+on-download-complete=$user_path/.aria2/automatic_upload.sh
 on-download-stop=$user_path/.aria2/automatic_delete.sh
 allow-overwrite=true" > $user_path/.aria2/aria2.conf
 

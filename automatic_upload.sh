@@ -15,7 +15,7 @@ then
 	echo "$path" >> $log_path
 	echo "start time $(date)" >> $log_path
 
-    php /var/www/oneindex/one.php upload:file "$filepath" >> $log_path
+    php /var/www/oneindex/one.php upload:file "$path" >> $log_path
 
 	echo "complete time $(date)" >> $log_path
 	echo -e >> $log_path

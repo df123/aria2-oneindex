@@ -4,7 +4,7 @@ Description=aria2
 [Service]
 User=aria2
 Type=oneshot
-ExecStart=/usr/bin/aria2c -l "/home/aria2/.aria2/aria2.log"
+ExecStart=/usr/bin/aria2c -l "/home/aria2/.aria2/aria2.log" --log-level=notice
 KillMode=control-group
 RemainAfterExit=yes
 
