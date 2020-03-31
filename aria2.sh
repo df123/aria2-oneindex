@@ -35,6 +35,7 @@ check_system(){
         else
             echo "${Error} ${RedBG} 未知版本的debian ${Font} "
             exit 1
+        fi
     else
         echo -e "${Error} ${RedBG} 当前系统为不在支持的系统列表内，安装中断 ${Font} "
         exit 1
