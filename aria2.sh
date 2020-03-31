@@ -12,7 +12,7 @@ default_version="php7.3"
 bit=`uname -m`
 source /etc/os-release &>/dev/null
 
-# 判定是否为root用户
+# 判定是否为root用户 引用参考fangwater
 is_root(){
     if [ `id -u` == 0 ]
         then echo -e "${OK} ${GreenBG} 当前用户是root用户，进入安装流程 ${Font} "
@@ -23,7 +23,7 @@ is_root(){
     fi
 }
 
-# 系统检测、仅支持 Debian9+
+# 系统检测、仅支持 Debian9+ 引用参考fangwater
 check_system(){
 	KernelBit="$(getconf LONG_BIT)"
     if [[ "${ID}" == "debian" && ${VERSION_ID} -ge 9 ]];then
@@ -46,7 +46,7 @@ install_requirement_software(){
     done
 }
 
-# 检查端口是否被占用
+# 检查端口是否被占用 引用参考fangwater
 port_exist_check(){
     if [[ 0 -eq `netstat -tlpn | grep "$1"| wc -l` ]];then
         echo -e "${OK} ${GreenBG} $1 端口未被占用 ${Font}"
@@ -58,8 +58,6 @@ port_exist_check(){
     fi
 }
 
-
-#寻找未被发现的端口
 available_port="8080"
 find_port(){
     port=$1
@@ -72,6 +70,7 @@ find_port(){
     available_port=$port
 }
 
+#引用参考fangwater
 get_Aria2Pass(){
     read -p "请输入你的Aria2密钥:" pass
 }
