@@ -49,7 +49,7 @@ aria2默认rpc端口为```6800```
 ## oneindex
 默认安装的web服务器为apache2，如果已经安装nginx，则使用nginx，不安装apache2   
 默认端口为```8080```   
-apache2可以执行```cat /etc/apache2/sites-enabled/oneindex.conf | grep '^<VirtualHost'```查看
+apache2可以执行```cat /etc/apache2/sites-enabled/oneindex.conf | grep '^<VirtualHost'```查看  
 oneindex具体使用，请参考[oneindex](https://github.com/donwa/oneindex)  
 
 ## 参考引用
