@@ -8,7 +8,7 @@ source ./df123_library.sh
 # ====================================================
 
 start_path=""
-default_version="php7.3"
+default_version="php7.0"
 bit=`uname -m`
 source /etc/os-release &>/dev/null
 
@@ -28,6 +28,13 @@ check_system(){
 	KernelBit="$(getconf LONG_BIT)"
     if [[ "${ID}" == "debian" && ${VERSION_ID} -ge 9 ]];then
         echo -e "${OK} ${GreenBG} 当前系统为 Debian ${VERSION_ID} ${Font} "
+        if [[ ${VERSION_ID} -eq 9 ]];then
+            default_version="php7.0"
+        elif [[ ${VERSION_ID} -eq 10 ]];then
+            default_version="php7.3"
+        else
+            echo "${Error} ${RedBG} 未知版本的debian ${Font} "
+            exit 1
     else
         echo -e "${Error} ${RedBG} 当前系统为不在支持的系统列表内，安装中断 ${Font} "
         exit 1

@@ -37,7 +37,7 @@ check_software_installed_s(){
 php_install(){
     install_software_list=("-cli" "-curl")
     echo -e "${GreenBG} 开始安装PHP7 ${Font}"
-    read -p "请输入你想要安装的php版本（默认php7.3）:" php_version
+    read -p "请输入你想要安装的php版本（默认$default_version）:" php_version
 
     if [ "$php_version" = "" ]; 
     then
