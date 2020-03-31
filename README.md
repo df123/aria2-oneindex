@@ -54,5 +54,5 @@ oneindex具体使用，请参考[oneindex](https://github.com/donwa/oneindex)
 
 ## 参考引用
 仅aria2.sh中的部分代码有参考和引用https://github.com/fangwater/OneDrive-vps-builder  
-具体引用部分将在代码中标出。
+具体引用参考部分已经代码中标出。
 
