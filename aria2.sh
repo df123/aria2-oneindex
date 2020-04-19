@@ -47,7 +47,7 @@ check_system(){
 install_requirement_software(){
     apt update
 
-    requirement_software=("wget" "unzip" "net-tools" "curl" "git")
+    requirement_software=("net-tools")
 	for item in ${requirement_software[@]}
     do
         check_software_installed_s $item
