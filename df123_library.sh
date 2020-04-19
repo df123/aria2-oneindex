@@ -51,20 +51,18 @@ php_install(){
 
 
 check_webserver(){
-    installed_server=" "
-    if [[ 1 -eq `dpkg -s apache2 | grep "Status: install ok installed" | wc -l` ]];then
-        echo -e "${OK} ${GreenBG} apache2 已经安装 ${Font}"
-        apache2_sites
-        sleep 1
-    elif [[ 1 -eq `dpkg -s nginx | grep "Status: install ok installed" | wc -l` ]];then
-        echo -e "${OK} ${GreenBG} nginx 已经安装 ${Font}"
+    installed_server=" "     
+    if [[ 1 -eq `dpkg -s nginx | grep "Status: install ok installed" | wc -l` ]];then
+        echo -e "${OK} ${GreenBG} nginx 开始安装 ${Font}"
         fpm="-fpm"
         check_software_installed_s $default_version$fpm
         nginx_sites
         sleep 1
     else 
-        echo -e "${Info} ${Yellow} apache2和nginx均未安装，现在安装apache2 ${Font}"
+        echo -e "${Info} ${Yellow} nginx未安装，现在安装apache2 ${Font}"
 		check_software_installed_s apache2
+		apache2_sites
+        	sleep 1
     fi
 }
 
