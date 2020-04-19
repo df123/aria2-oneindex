@@ -43,7 +43,6 @@ php_install(){
     then
         php_version=$default_version
     fi
-	check_software_installed_s $php_version
 	for item in ${install_software_list[@]}
 	do
 		check_software_installed_s $php_version$item
