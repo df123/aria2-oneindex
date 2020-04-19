@@ -61,6 +61,7 @@ check_webserver(){
     else 
         echo -e "${Info} ${Yellow} nginx未安装，现在安装apache2 ${Font}"
 		check_software_installed_s apache2
+		check_software_installed_s $php_version
 		apache2_sites
         	sleep 1
     fi
