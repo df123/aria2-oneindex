@@ -1,3 +1,5 @@
+## oneindex好像已经不可用了。
+
 ## aria2-oneindex
 aria2下载完成后，使用oneindex自动上传到onedirve
 
